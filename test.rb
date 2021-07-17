@@ -6,7 +6,7 @@ require_relative 'terms_and_condition.rb'
 class TestTermsAndCondition < Minitest::Test
   def setup
     header = 'A T&C Document'
-    body = ['CLAUSE-3', 'CLAUSE-4', 'SECTION-1']
+    @body = ['CLAUSE-3', 'CLAUSE-4', 'SECTION-1']
     footer = 'Your legals.'
 
     clauses = [
@@ -19,8 +19,8 @@ class TestTermsAndCondition < Minitest::Test
       { "id": 1, "clauses_ids": [1, 2] }
     ]
 
-    @t_and_c = TermsAndCondition.new(header, body, footer, clauses, sections)
-    @t_and_c.process_body
+    @t_and_c = TermsAndCondition.new(header, @body, footer, clauses, sections)
+    
   end
 
   def test_example_template
@@ -31,6 +31,21 @@ class TestTermsAndCondition < Minitest::Test
       "Is made of The quick brown fox;jumps over the lazy dog.\n" \
       "\nYour legals."
     
+    @t_and_c.process_body
+    assert_equal expected, @t_and_c.display
+  end
+
+  def test_example_template_with_one_more_clause
+    expected = "A T&C Document\n\n" \
+      "This document is made of plaintext.\n" \
+      "Is made of And dies.\n" \
+      "Is made of The white horse is white.\n" \
+      "Is made of The quick brown fox;jumps over the lazy dog.\n" \
+      "Is made of The quick brown fox.\n" \
+      "\nYour legals."
+    
+    @body << 'CLAUSE-1'
+    @t_and_c.process_body
     assert_equal expected, @t_and_c.display
   end
 end
